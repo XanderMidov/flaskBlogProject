@@ -1,0 +1,5 @@
+Dear {{ username }}
+Welcome
+To confirm your account please
+{{ url }}
+Sinc

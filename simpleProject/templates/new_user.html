@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block section %}
+    <form method="post">
+        {{ form_t.hidden_tag() }}
+        <div>{{ form_t.name_form.label }}:{{ form_t.name_form }}</div>
+        <div>{{ form_t.password_form.label }}:{{ form_t.password_form }}</div>
+        <div>{{ form_t.submit_form }}</div>
+    </form>
+{% endblock %}

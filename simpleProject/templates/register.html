@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block section %}
+    <form method="post">
+    {{ form_t.hidden_tag() }}
+        <table>
+            <tr>
+                <td>{{ form_t.name_form.label }}</td>
+                <td>{{ form_t.name_form }}</td>
+            </tr>
+            <tr>
+                <td>{{ form_t.email_form.label }}</td>
+                <td>{{ form_t.email_form }}</td>
+            </tr>
+            <tr>
+                <td>{{ form_t.password_form.label }}</td>
+                <td>{{ form_t.password_form }}</td>
+            </tr>
+            <tr>
+                <td>{{ form_t.password_form_2.label }}</td>
+                <td>{{ form_t.password_form_2 }}</td>
+            </tr>
+            <tr>
+                <td>{{ form_t.submit_form }}</td>
+                <td></td>
+            </tr>
+        </table>
+    </form>
+{% endblock %}
