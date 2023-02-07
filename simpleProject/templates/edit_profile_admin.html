@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block section %}
+    <form method="post">
+    {{ form_t.hidden_tag() }}
+        <table>
+            <tr>
+                <td>{{ form_t.username.label }}</td>
+                <td>{{ form_t.username }}</td>
+            </tr>
+                        <tr>
+                <td>{{ form_t.realname.label }}</td>
+                <td>{{ form_t.realname }}</td>
+            </tr>
+                        <tr>
+                <td>{{ form_t.email.label }}</td>
+                <td>{{ form_t.email }}</td>
+            </tr>
+                        <tr>
+                <td>{{ form_t.role.label }}</td>
+                <td>{{ form_t.role }}</td>
+            </tr>
+            <tr>
+                <td>{{ form_t.location.label }}</td>
+                <td>{{ form_t.location }}</td>
+            </tr>
+                        <tr>
+                <td>{{ form_t.confirmed.label }}</td>
+                <td>{{ form_t.confirmed }}</td>
+            </tr>
+                        <tr>
+                <td>{{ form_t.role.label }}</td>
+                <td>{{ form_t.role }}</td>
+            </tr>
+            <tr>
+                <td>{{ form_t.about_me.label }}</td>
+                <td>{{ form_t.about_me }}</td>
+            </tr>
+                        <tr>
+                <td>{{ form_t.submit }}</td>
+                <td></td>
+            </tr>
+        </table>
+    </form>
+{% endblock %}

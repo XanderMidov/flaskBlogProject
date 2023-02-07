@@ -1,13 +1,18 @@
-from flask import Flask
+import datetime
+import hashlib
+
+from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from config import config
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, LoginManager, AnonymousUserMixin
 from itsdangerous import TimedSerializer
 
+
 app = Flask(__name__)
 app.config.from_object(config['development'])
-db = SQLAlchemy(app)
+db = SQLAlchemy()
+db.init_app(app)
 login_manager = LoginManager(app)
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
@@ -17,25 +22,34 @@ login_manager.login_view = 'auth.login'
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-class Permission_2:
+class Permission:
     FOLLOW = 'F'
-    COMMENT = 'FC'
-    WRITE = 'FCW'
-    MODERATE = 'FCWM'
+    COMMENT = 'C'
+    WRITE = 'W'
+    MODERATE = 'M'
     ADMIN = 'A'
 
-class Permission:
+class Permission_2:
     FOLLOW = 1
     COMMENT = 2
     WRITE = 4
     MODERATE = 8
     ADMIN = 16
 
+
+class Post(db.Model):
+    __tablename__ = 'posts'
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.datetime.utcnow)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+
 class Role(db.Model):
     def __init__(self, **kwargs):
         super(Role, self).__init__(**kwargs)
         if self.permissions is None:
-            self.permissions = 0
+            self.permissions = ''
 
     def add_permission(self, perm):
         if not self.has_permission(perm):
@@ -43,13 +57,13 @@ class Role(db.Model):
 
     def remove_permission(self, perm):
         if self.has_permission(perm):
-            self.permissions -= perm
+            self.permissions = self.permissions.replace(perm, '')
 
     def reset_permissions(self):
-        self.permissions = 0
+        self.permissions = ''
 
     def has_permission(self, perm):
-        return self.permissions & perm == perm
+        return perm in self.permissions or Permission.ADMIN in self.permissions
 
     __tablename__ = 'roles'
     id = db.Column(db.INTEGER, primary_key=True)
@@ -57,7 +71,8 @@ class Role(db.Model):
     label = db.Column(db.String(64))
     user = db.relationship('User', backref='role')
     default = db.Column(db.Boolean, default=False, index=True)
-    permissions = db.Column(db.Integer)
+    permissions = db.Column(db.String(12))
+
 
     @staticmethod
     def insert_roles():
@@ -80,6 +95,7 @@ class Role(db.Model):
     def __repr__(self):
         return '<Role %s>' % self.name
 
+
 class User(UserMixin, db.Model):
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -88,6 +104,17 @@ class User(UserMixin, db.Model):
                 self.role = Role.query.filter_by(name='Administrator').first()
             if self.role is None:
                 self.role = Role.query.filter_by(default=True).first()
+
+    def gravatar(self, size=100, default='identicon', rating='g'):
+        if request.is_secure:
+            url = 'https://secure.gravatar.com/avatar'
+        else:
+            url = 'http://www.gravatar.com/avatar'
+        hash = hashlib.md5(self.email.lower().encode('utf-8')).hexdigest()
+        result = f'{url}/{hash}?s={size}&d={default}&r={rating}'.format(url=url, hash=hash, size=size, default=default, rating=rating)
+        return result
+
+
 
     def can(self, perm):
         return self.role is not None and self.role.has_permission(perm)
@@ -99,9 +126,19 @@ class User(UserMixin, db.Model):
     confirmed = db.Column(db.Boolean, default=False)
     password_hash = db.Column(db.String(128))
     id = db.Column(db.Integer, primary_key=True)
+    realname = db.Column(db.String(64))
     username = db.Column(db.String(64), unique=True, index=True)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     email = db.Column(db.String(64), unique=True, index=True)
+    location = db.Column(db.Text())
+    member_since = db.Column(db.DateTime(), default=datetime.datetime.utcnow)
+    last_seen = db.Column(db.DateTime(), default=datetime.datetime.utcnow())
+    about_me = db.Column(db.Text())
+    posts = db.relationship('Post', backref='author')
+
+    def ping(self):
+        self.last_seen = datetime.datetime.utcnow()
+        db.session.add(self)
 
     @property
     def password(self):

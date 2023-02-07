@@ -3,48 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='reset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-
-<header><h1><a href="{{ url_for('main.index') }}">Lorem</a></h1>
+<header>
+    <div class="logo">
+        <a href="{{ url_for('main.index') }}">
+            <img width="100" src="{{ url_for('static', filename='logo.png') }}" alt="logo">
+        </a>
+    </div>
+    <h1></h1>
     {% block header %}
-    {% if current_user.is_authenticated %}
-        <div>Hello, {{ current_user.username }}</div>
-        <div><a href="{{ url_for('auth.logout') }}">Logout</a></div>
-    {% else %}
-        <div>Hello, Guest</div>
-        <div><a href="{{ url_for('auth.login') }}">Login</a></div>
-    {% endif %}
-{% endblock %}
+        <div class="account">
+            {% if current_user.is_authenticated %}
+                <div>Здравствуйте,
+                    <a href="{{ url_for('main.user', username=current_user.username) }}">{{ current_user.username }}</a>,
+                    <a href="{{ url_for('main.edit_profile') }}">Редактировать</a>
+                </div>
+                <div><a href="{{ url_for('auth.logout') }}">Выйти</a></div>
+            {% else %}
+                <div>Здравствуйте, Гость</div>
+                <div><a href="{{ url_for('auth.login') }}">Войти</a></div>
+                <div><a href="{{ url_for('auth.register') }}">Регистрация</a></div>
+            {% endif %}
+        </div>
+    {% endblock %}
 </header>
-{% block nav %}
 <nav>
-    <ul class="nav">
-        {% for key, value in nav_dict_t.items() %}
-        <li><a href="{{ url_for('main.page', name=key) }}">{{ value }}</a></li>
-        {% endfor %}
-        <li><a href="{{ url_for('main.for_admins_only') }}">Admin page</a></li>
-        <li><a href="{{ url_for('main.for_moderators_only') }}">Moderators page</a></li>
-        <li><a href="{{ url_for('main.new_user') }}">Новый пользователь</a></li>
-        <li><a href="{{ url_for('main.auth_page') }}">Секретная страница</a></li>
-        <li><a href="{{ url_for('auth.register') }}">Registration</a></li>
-    </ul>
+    {% block nav %}
+        <ul class="nav">
+            {% for key, value in nav_dict_t.items() %}
+                <li><a href="{{ url_for('main.page', name=key) }}">{{ value }}</a></li>
+            {% endfor %}
+            <li><a href="{{ url_for('main.for_admins_only') }}">Администратор</a></li>
+            <li><a href="{{ url_for('main.for_moderators_only') }}">Модераторы</a></li>
+            <li><a href="{{ url_for('main.auth_page') }}">Секретная страница</a></li>
+        </ul>
+    {% endblock %}
 </nav>
-{% endblock %}
-{% block section %}
-<section class="section-1">
-    <div class="section-1__content">
-    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet atque, doloremque, doloribus eligendi ipsum laborum magnam placeat praesentium quam reiciendis, sapiente sit vel velit? Atque commodi dicta minus nemo quae?
-    </div>
-</section>
-{% endblock %}
-<footer>
-    <div>
-        {% for message in get_flashed_messages() %}
-            {{ message }}
-        {% endfor %}
-    </div>
-</footer>
+<div class="base">
+    <section class="section-1">
+        <div class="section-1__content">
+            {% block section %}
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet atque, doloremque, doloribus eligendi
+                ipsum
+                laborum magnam placeat praesentium quam reiciendis, sapiente sit vel velit? Atque commodi dicta minus
+                nemo
+                quae?
+            {% endblock %}
+        </div>
+    </section>
+    <footer>
+        <div>
+            {% for message in get_flashed_messages() %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    </footer>
+</div>
 </body>
 </html>

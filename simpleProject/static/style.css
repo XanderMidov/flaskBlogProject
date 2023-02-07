@@ -1,0 +1,48 @@
+.account {
+    padding: 20px;
+}
+
+nav {
+    margin-bottom: 20px;
+    margin-right: 20px;
+    float: left;
+}
+
+nav ul {
+    list-style-type: none;
+}
+
+nav a {
+    display: block;
+    text-decoration: none;
+    width: 150px;
+    background: rgba(50,210,53,0.84);
+    border: darkblue solid thin;
+    margin-bottom: 5px;
+}
+
+nav a:hover {
+    background-color:  #235c23;
+    color: cornsilk;
+}
+
+
+.section-1 {
+    border:  darkblue thin solid;
+    margin-bottom: 20px;
+}
+
+.section-1__content {
+    padding: 20px;
+}
+
+.account {
+    border: darkblue thin solid;
+    width: 380px;
+    margin-bottom: 20px;
+}
+
+.base {
+    float: left;
+    width: 70%;
+}

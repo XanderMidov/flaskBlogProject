@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block section %}
+    <p>
+        <img src="{{ user.gravatar() }}" alt="avatar">
+    </p>
+    <p>
+        Hello, {{ user.username }}
+        {% if user.location %}
+            From <a href="https://www.google.com/search?q={{ user.location }}">
+            {{ user.location }}
+        </a>
+        {% endif %}
+    </p>
+    <p>
+        Member since {{ user.member_since }}
+    </p>
+    <p>
+        Last seen {{ user.last_seen }}
+    </p>
+    <p>
+        <a href="{{ url_for('main.edit_profile') }}">Редактировать</a>
+    </p>
+    {% if current_user.is_administrator() %}
+        <form method="post">
+            {{ form_t.hidden_tag() }}
+            {{ form_t.user }}
+            {{ form_t.submit }}
+        </form>
+    {% endif %}
+{% endblock %}
